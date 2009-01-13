@@ -1,0 +1,12 @@
+
+
+This archive contains the distribution Continuation-Escape, version
+0.01:
+
+  escape continuations (returning higher up the stack)
+
+This software is copyright (c) 2009 by Shawn M Moore.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as perl itself.
+
