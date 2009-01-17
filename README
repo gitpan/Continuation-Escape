@@ -1,7 +1,7 @@
 
 
 This archive contains the distribution Continuation-Escape, version
-0.01:
+0.02:
 
   escape continuations (returning higher up the stack)
 
