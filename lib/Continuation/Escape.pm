@@ -1,16 +1,15 @@
 package Continuation::Escape;
-our $VERSION = '0.02';
-
 use strict;
 use warnings;
+use 5.8.0;
 use base 'Exporter';
 our @EXPORT = 'call_cc';
+our $VERSION = '0.03';
 
 use Scope::Upper qw/unwind HERE/;
 
 # This registry is just so we can make sure that the user is NOT trying to save
-# and run continuations later. There's no way in hell Perl 5 can support real
-# unlimited continuations without a biblical amount of rototilling.
+# and run continuations later.
 # Sorry if the name got you excited. :/
 our %CONTINUATION_REGISTRY;
 
@@ -18,6 +17,7 @@ sub call_cc (&) {
     my $code = shift;
 
     my $escape_level = HERE;
+    my $wantarray = wantarray;
 
     my $escape_continuation;
     $escape_continuation = sub {
@@ -26,7 +26,7 @@ sub call_cc (&) {
             Carp::croak("Escape continuations are not usable outside of their original scope.");
         }
 
-        unwind @_ => $escape_level;
+        unwind(($wantarray ? @_ : $_[0]) => $escape_level);
     };
 
     local $CONTINUATION_REGISTRY{$escape_continuation} = $escape_continuation;
@@ -40,10 +40,6 @@ __END__
 =head1 NAME
 
 Continuation::Escape - escape continuations (returning higher up the stack)
-
-=head1 VERSION
-
-version 0.02
 
 =head1 SYNOPSIS
 
@@ -70,13 +66,15 @@ to jump back up the stack. Invoking an escape continuation is a lot like
 throwing an exception, however escape continuations do not necessarily indicate
 exceptional circumstances.
 
-B<The interface for context will probably change.> Right now when squeezing a
-list into scalar context, the B<last> element is used, instead of the usual
-squeezing into the number of elements in that list. In the meantime, just use
-the same context on the receiving end as the sending end.
-
 This module builds on Vincent Pit's excellent L<Scope::Upper> to give you a
 nicer interface to returning to outer scopes.
+
+=head1 CONTEXT
+
+If the return context of the continuation is scalar, the first argument to the
+continuation will be returned. This is slightly more useful than C<1>, the
+number of arguments to the continuation. This DWIMs when you want to return
+a scalar anyway.
 
 =head1 CAVEATS
 
@@ -91,7 +89,7 @@ nice. Does anyone know how much work would even be involved? C<:)>
 
 =head1 AUTHOR
 
-Shawn M Moore, C<sartak@bestpractical.com>
+Shawn M Moore, C<sartak@gmail.com>
 
 =head1 THANKS TO
 
@@ -99,4 +97,12 @@ Vincent Pit for writing the excellent L<Scope::Upper> which does B<two> things
 that I've wanted forever (escape continuations and localizing variables at
 higher stack levels).
 
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2009 Shawn M Moore.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
 =cut
+

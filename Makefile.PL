@@ -1,19 +1,14 @@
+# Load the Module::Install bundled in ./inc/
+use inc::Module::Install;
 
-use strict;
-use warnings;
+# Define metadata
+name           'Continuation-Escape';
+all_from       'lib/Continuation/Escape.pm';
+githubmeta;
 
-use ExtUtils::MakeMaker;
+requires       'Scope::Upper' => '0.06';
 
-WriteMakefile(
-  DISTNAME  => 'Continuation-Escape',
-  NAME      => 'Continuation::Escape',
-  AUTHOR    => 'Shawn\ M\ Moore\ \<sartak\@bestpractical\.com\>',
-  ABSTRACT  => 'escape continuations (returning higher up the stack)',
-  VERSION   => '0.02',
-  EXE_FILES => [ qw() ],
-  (eval { ExtUtils::MakeMaker->VERSION(6.21) } ? (LICENSE => 'perl') : ()),
-  PREREQ_PM    => {
-    "Test::Exception" => '0.27',
-    "Scope::Upper" => '0.06',
-  },
-);
+build_requires 'Test::Exception' => '0.27';
+
+WriteAll;
+
